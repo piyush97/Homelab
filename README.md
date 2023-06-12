@@ -6,6 +6,8 @@ Welcome to my Homelab server! This document provides an overview of the configur
 
 - **Processor:** Intel Core i7-1360P
 - **Memory:** 64GB
+- **Passmark:**: 19726
+- **TDP:** 28 W
 - **Storage:** 24TB HDD + 2TB ssd M.2 NVME
 - **RAID Configuration:** RAID 1 using ZFS
 - **Total Storage Capacity:** 26TB
