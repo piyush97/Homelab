@@ -1,4 +1,4 @@
-# Root Directory - Machines
+# Machines
 
 This repository contains two folders, `mediarr` and `misc`, each with their respective `docker-compose.yml` files and a `readme` file.
 
