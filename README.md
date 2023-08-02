@@ -23,7 +23,7 @@ Welcome to my Homelab server! This document provides an overview of the configur
 
 - **Purpose:** Media server, personal NAS, personal experimental Homelab
 - **Network Configuration:** 10Gb lan connection with TP Link switch and Caldigit TS4 Elements Hub using 1 thunderbolt 4 port
-- **Services and Applications:** To be Updated
+- **Services and Applications:** [Services](/machines)
 
 ## GitHub Repository (TO DO)
 
