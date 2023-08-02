@@ -1,111 +1,148 @@
 version: "2.1"
 services:
-  homarr:
-    container_name: homarr
-    image: ghcr.io/ajnart/homarr:latest
-    restart: unless-stopped
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=America/Toronto
     volumes:
-      - ./homarr/configs:/app/data/configs
-      - ./homarr/icons:/app/public/icons
-    ports:
-      - '7575:7575'
-    depends_on:
-      - reverse-proxy
+      - /appdata/prowlarr:/config
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.homarr.rule=Host(`home.lab`)"
-      - "traefik.http.routers.homarr.entrypoints=web"
-  pihole:
-    container_name: pihole
-    image: pihole/pihole:latest
-    # For DHCP it is recommended to remove these ports and instead add: network_mode: "host"
-    ports:
-      - "54:53/tcp"
-      - "56:53/udp"
-      - "89:80/tcp"
+      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.lab`)"
+      - "traefik.http.routers.prowlarr.entrypoints=web"
+    depends_on:
+      - reverse-proxy
+      
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
     environment:
-      TZ: 'America/Toronto'
-      WEBPASSWORD: 'admin'
-    # Volumes store your data between container upgrades
+      - PUID=0
+      - PGID=0
+      - TZ=America/Toronto
     volumes:
-      - './etc-pihole:/etc/pihole'
-      - './etc-dnsmasq.d:/etc/dnsmasq.d'
-    # cap_add:
-      # - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
+      - /appdata/radarr:/config
+      - /media/media-for-home:/movies #optional
+      - /media/media-for-home:/downloads #optional
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.radarr.rule=Host(`radarr.lab`)"
+      - "traefik.http.routers.radarr.entrypoints=web"
+    depends_on:
+      - reverse-proxy
+      
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=America/Toronto
+    volumes:
+      - /appdata/sonarr:/config
+      - /media/media-for-home:/tv #optional
+      - /media/media-for-home:/downloads #optional
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.lab`)"
+      - "traefik.http.routers.sonarr.entrypoints=web"
+    depends_on:
+      - reverse-proxy
+      
+  overseerr:
+    image: lscr.io/linuxserver/overseerr:latest
+    container_name: overseerr
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=America/Toronto
+    volumes:
+      - /appdata/overseerr:/config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.overseerr.rule=Host(`overseerr.lab`)"
+      - "traefik.http.routers.overseerr.entrypoints=web"
+    depends_on:
+      - reverse-proxy
+      
+  autobrr:
+    container_name: autobrr
+    image: ghcr.io/autobrr/autobrr:latest
     restart: unless-stopped
-    
-  tautulli:
-    image: lscr.io/linuxserver/tautulli:latest
-    container_name: tautulli
+    user: 0:0
+    environment:
+      - TZ=${TZ}
+    volumes:
+      - /appdata/autobrr:/config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.autobrr.rule=Host(`autobrr.lab`)"
+      - "traefik.http.routers.autobrr.entrypoints=web"
+    depends_on:
+      - reverse-proxy
+      
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:latest
+    container_name: sabnzbd
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=America/Toronto
     volumes:
-      - /appdata/tautulli:/config
-    ports:
-      - 8181:8181
-    restart: unless-stopped
-    depends_on:
-      - reverse-proxy
+      - /appdata/sabnzbd:/config
+      - /media/media-for-home/downloads:/downloads #optional
+      - /media/media-for-home/incomplete-downloads:/incomplete-downloads #optional
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.tautulli.rule=Host(`tautulli.lab`)"
-      - "traefik.http.routers.tautulli.entrypoints=web"
-
-  qbit-autobrr:
-    image: lscr.io/linuxserver/qbittorrent:latest
-    container_name: qbittorrent-autobrr
+      - "traefik.http.routers.sabnzbd.rule=Host(`sabnzbd.lab`)"
+      - "traefik.http.routers.sabnzbd.entrypoints=web"
+    depends_on:
+      - reverse-proxy
+      
+  pyload-ng:
+    image: lscr.io/linuxserver/pyload-ng:latest
+    container_name: pyload-ng
     environment:
-      - PUID=0
-      - PGID=0
+      - PUID=1000
+      - PGID=1000
       - TZ=America/Toronto
-      - WEBUI_PORT=8082
     volumes:
-      - /appdata/qbit2/config:/config
-      - /media/hdd2:/downloads
-    ports:
-      - 8082:8082
-      - 6882:6881
-      - 6882:6881/udp
-    restart: unless-stopped
-    depends_on:
-      - reverse-proxy
+      - /appdata/pyload/config:/config
+      - /media/media-for-home/downloads:/downloads
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.qbit.rule=Host(`qbit-autobrr.lab`)"
-      - "traefik.http.routers.qbit.entrypoints=web"
-
-  qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:latest
-    container_name: qbittorrent
+      - "traefik.http.routers.pyload.rule=Host(`pyload.lab`)"
+      - "traefik.http.routers.pyload.entrypoints=web"
+    depends_on:
+      - reverse-proxy
+      
+  filebrowser:
+    image: hurlenko/filebrowser
+    user: "${UID}:${GID}"
+    ports:
+      - 443:8080
+    volumes:
+      - /media:/data
+      - /appdata/filebrowser:/config
     environment:
-      - PUID=0
-      - PGID=0
-      - TZ=America/Toronto
-      - WEBUI_PORT=8080
-    volumes:
-      - /appdata/qbit/config:/config
-      - /media/media-for-home:/downloads
-    ports:
-      - 8080:8080
-      - 6881:6881
-      - 6881:6881/udp
-    restart: unless-stopped
-    depends_on:
-      - reverse-proxy
+      - FB_BASEURL=/filebrowser
+    restart: always
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.qbit.rule=Host(`qbit.lab`)"
-      - "traefik.http.routers.qbit.entrypoints=web"
-
+      - "traefik.http.routers.filebrowser.rule=Host(`filebrowser.lab`)"
+      - "traefik.http.routers.filebrowser.entrypoints=web"
+    depends_on:
+      - reverse-proxy
   watchtower:
     image: containrrr/watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /root/.docker/config.json:/config.json
     command: --interval 30
-    
+
   reverse-proxy:
     image: traefik:v3.0
     command: --api.insecure=true --providers.docker  --entrypoints.web.address=:80 --providers.docker.exposedbydefault=false --log.level=DEBUG
