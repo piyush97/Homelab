@@ -1,0 +1,114 @@
+version: "2.1"
+services:
+  homarr:
+    container_name: homarr
+    image: ghcr.io/ajnart/homarr:latest
+    restart: unless-stopped
+    volumes:
+      - ./homarr/configs:/app/data/configs
+      - ./homarr/icons:/app/public/icons
+    ports:
+      - '7575:7575'
+    depends_on:
+      - reverse-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homarr.rule=Host(`home.lab`)"
+      - "traefik.http.routers.homarr.entrypoints=web"
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    ports:
+      - "54:53/tcp"
+      - "56:53/udp"
+      - "89:80/tcp"
+    environment:
+      TZ: 'America/Toronto'
+      WEBPASSWORD: 'admin'
+    volumes:
+      - './etc-pihole:/etc/pihole'
+      - './etc-dnsmasq.d:/etc/dnsmasq.d'
+    restart: unless-stopped
+    
+  tautulli:
+    image: lscr.io/linuxserver/tautulli:latest
+    container_name: tautulli
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+    volumes:
+      - /appdata/tautulli:/config
+    ports:
+      - 8181:8181
+    restart: unless-stopped
+    depends_on:
+      - reverse-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tautulli.rule=Host(`tautulli.lab`)"
+      - "traefik.http.routers.tautulli.entrypoints=web"
+
+  qbit-autobrr:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent-autobrr
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=America/Toronto
+      - WEBUI_PORT=8082
+    volumes:
+      - /appdata/qbit2/config:/config
+      - /media/hdd2:/downloads
+    ports:
+      - 8082:8082
+      - 6882:6881
+      - 6882:6881/udp
+    restart: unless-stopped
+    depends_on:
+      - reverse-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.qbit.rule=Host(`qbit-autobrr.lab`)"
+      - "traefik.http.routers.qbit.entrypoints=web"
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=America/Toronto
+      - WEBUI_PORT=8080
+    volumes:
+      - /appdata/qbit/config:/config
+      - /media/media-for-home:/downloads
+    ports:
+      - 8080:8080
+      - 6881:6881
+      - 6881:6881/udp
+    restart: unless-stopped
+    depends_on:
+      - reverse-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.qbit.rule=Host(`qbit.lab`)"
+      - "traefik.http.routers.qbit.entrypoints=web"
+
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /root/.docker/config.json:/config.json
+    command: --interval 30
+    
+  reverse-proxy:
+    image: traefik:v3.0
+    command: --api.insecure=true --providers.docker  --entrypoints.web.address=:80 --providers.docker.exposedbydefault=false --log.level=DEBUG
+    ports:
+      - "80:80"
+      - "8081:8080"
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /root/traefik.toml:/config/traefik.toml
