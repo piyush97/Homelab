@@ -15,21 +15,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.homarr.rule=Host(`home.lab`)"
       - "traefik.http.routers.homarr.entrypoints=web"
-  pihole:
-    container_name: pihole
-    image: pihole/pihole:latest
-    ports:
-      - "54:53/tcp"
-      - "56:53/udp"
-      - "89:80/tcp"
-    environment:
-      TZ: 'America/Toronto'
-      WEBPASSWORD: 'admin'
-    volumes:
-      - './etc-pihole:/etc/pihole'
-      - './etc-dnsmasq.d:/etc/dnsmasq.d'
-    restart: unless-stopped
-    
+  
   tautulli:
     image: lscr.io/linuxserver/tautulli:latest
     container_name: tautulli
