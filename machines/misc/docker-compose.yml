@@ -35,29 +35,6 @@ services:
       - "traefik.http.routers.tautulli.rule=Host(`tautulli.lab`)"
       - "traefik.http.routers.tautulli.entrypoints=web"
 
-  qbit-autobrr:
-    image: lscr.io/linuxserver/qbittorrent:latest
-    container_name: qbittorrent-autobrr
-    environment:
-      - PUID=0
-      - PGID=0
-      - TZ=America/Toronto
-      - WEBUI_PORT=8082
-    volumes:
-      - /appdata/qbit2/config:/config
-      - /media/hdd2:/downloads
-    ports:
-      - 8082:8082
-      - 6882:6881
-      - 6882:6881/udp
-    restart: unless-stopped
-    depends_on:
-      - reverse-proxy
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.qbit.rule=Host(`qbit-autobrr.lab`)"
-      - "traefik.http.routers.qbit.entrypoints=web"
-
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
@@ -88,6 +65,40 @@ services:
       - /root/.docker/config.json:/config.json
     command: --interval 30
     
+  threadfin:
+    image: fyb3roptik/threadfin
+    container_name: threadfin
+    ports:
+      - "34400:34400"
+    environment:
+      - THREADFIN_BRANCH=beta
+      - THREADFIN_DEBUG=0
+      - THREADFIN_PORT=34400
+    volumes:
+      - /appdata/threadfin/config:/home/threadfin/conf
+
+  calibre-web:
+    image: lscr.io/linuxserver/calibre-web:latest
+    container_name: calibre-web
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - DOCKER_MODS=linuxserver/mods:universal-calibre #optional
+      - OAUTHLIB_RELAX_TOKEN_SCOPE=1 #optional
+    volumes:
+      - /path/to/data:/config
+      - /media/media-for-home/books:/books
+    ports:
+      - 8083:8083
+    restart: unless-stopped
+    depends_on:
+      - reverse-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.qbit.rule=Host(`calibre.lab`)"
+      - "traefik.http.routers.qbit.entrypoints=web"
+
   reverse-proxy:
     image: traefik:v3.0
     command: --api.insecure=true --providers.docker  --entrypoints.web.address=:80 --providers.docker.exposedbydefault=false --log.level=DEBUG
