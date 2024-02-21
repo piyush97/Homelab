@@ -15,7 +15,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.homarr.rule=Host(`home.lab`)"
       - "traefik.http.routers.homarr.entrypoints=web"
-  
+
   tautulli:
     image: lscr.io/linuxserver/tautulli:latest
     container_name: tautulli
@@ -64,7 +64,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /root/.docker/config.json:/config.json
     command: --interval 30
-    
+
   threadfin:
     image: fyb3roptik/threadfin
     container_name: threadfin
@@ -83,11 +83,11 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Etc/UTC
+      - TZ=America/Toronto
       - DOCKER_MODS=linuxserver/mods:universal-calibre #optional
       - OAUTHLIB_RELAX_TOKEN_SCOPE=1 #optional
     volumes:
-      - /path/to/data:/config
+      - /config/calibre:/config
       - /media/media-for-home/books:/books
     ports:
       - 8083:8083
