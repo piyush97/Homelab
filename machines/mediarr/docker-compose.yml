@@ -3,12 +3,15 @@ services:
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
+    restart: unless-stopped
     environment:
       - PUID=0
       - PGID=0
       - TZ=America/Toronto
     volumes:
       - /appdata/prowlarr:/config
+    ports:
+      - 9696:9696
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.lab`)"
@@ -19,6 +22,7 @@ services:
   radarr:
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
+    restart: unless-stopped
     environment:
       - PUID=0
       - PGID=0
@@ -27,6 +31,8 @@ services:
       - /appdata/radarr:/config
       - /media/media-for-home:/movies #optional
       - /media/media-for-home:/downloads #optional
+    ports:
+      - 7878:7878
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.radarr.rule=Host(`radarr.lab`)"
@@ -37,6 +43,7 @@ services:
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
+    restart: unless-stopped
     environment:
       - PUID=0
       - PGID=0
@@ -45,6 +52,8 @@ services:
       - /appdata/sonarr:/config
       - /media/media-for-home:/tv #optional
       - /media/media-for-home:/downloads #optional
+    ports:
+      - 8989:8989
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.sonarr.rule=Host(`sonarr.lab`)"
@@ -55,6 +64,7 @@ services:
   overseerr:
     image: lscr.io/linuxserver/overseerr:latest
     container_name: overseerr
+    restart: unless-stopped
     environment:
       - PUID=0
       - PGID=0
@@ -87,6 +97,7 @@ services:
   sabnzbd:
     image: lscr.io/linuxserver/sabnzbd:latest
     container_name: sabnzbd
+    restart: unless-stopped
     environment:
       - PUID=1000
       - PGID=1000
@@ -105,6 +116,7 @@ services:
   pyload-ng:
     image: lscr.io/linuxserver/pyload-ng:latest
     container_name: pyload-ng
+    restart: unless-stopped
     environment:
       - PUID=1000
       - PGID=1000
@@ -144,7 +156,9 @@ services:
     command: --interval 30
 
   reverse-proxy:
-    image: traefik:v3.0
+    image: traefik:latest
+    restart: unless-stopped
+
     command: --api.insecure=true --providers.docker  --entrypoints.web.address=:80 --providers.docker.exposedbydefault=false --log.level=DEBUG
     ports:
       - "80:80"
