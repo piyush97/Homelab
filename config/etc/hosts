@@ -11,17 +11,16 @@ ff02::2 ip6-allrouters
 ff02::3 ip6-allhosts
 
 # Homelab config
-
 192.168.0.4  home.lab
 192.168.0.4  tautulli.lab
 192.168.0.4  nextcloud.lab
-192.168.0.4 qbit.lab
-192.168.0.7  prowlarr.lab
-192.168.0.7  radarr.lab
-192.168.0.7  sonarr.lab
-192.168.0.7  overseerr.lab
-192.168.0.7  autobrr.lab
-192.168.0.7  sabnzbd.lab
-192.168.0.7  pyload.lab
-192.168.0.7  filebrowser.lab
+192.168.0.4  qbit.lab
+192.168.0.4  prowlarr.lab
+192.168.0.4  radarr.lab
+192.168.0.4  sonarr.lab
+192.168.0.4  overseerr.lab
+192.168.0.4  autobrr.lab
+192.168.0.4  sabnzbd.lab
+192.168.0.4  pyload.lab
+192.168.0.4  filebrowser.lab
 192.168.0.254  aguard.lab
