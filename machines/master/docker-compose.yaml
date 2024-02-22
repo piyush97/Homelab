@@ -100,7 +100,7 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.calibre-web.rule=Host(`calibre.lab`)"
+      - "traefik.http.routers.calibre-web.rule=Host(`calibre-web.lab`)"
       - "traefik.http.routers.calibre-web.entrypoints=web"
 
   prowlarr:
