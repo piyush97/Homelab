@@ -16,6 +16,26 @@ services:
       - "traefik.http.routers.homarr.rule=Host(`home.lab`)"
       - "traefik.http.routers.homarr.entrypoints=web"
 
+  calibre:
+    image: lscr.io/linuxserver/calibre:latest
+    container_name: calibre
+    security_opt:
+      - seccomp:unconfined #optional
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - PASSWORD= #optional
+      - CLI_ARGS= #optional
+    volumes:
+      - /media/media-for-home/books:/config
+    ports:
+      - 8086:8080
+      - 8185:8181
+      - 8087:8081
+    restart: unless-stopped
+
+
   tautulli:
     image: lscr.io/linuxserver/tautulli:latest
     container_name: tautulli
@@ -64,7 +84,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /root/.docker/config.json:/config.json
     command: --interval 30
-
+    
   threadfin:
     image: fyb3roptik/threadfin
     container_name: threadfin
@@ -87,7 +107,7 @@ services:
       - DOCKER_MODS=linuxserver/mods:universal-calibre #optional
       - OAUTHLIB_RELAX_TOKEN_SCOPE=1 #optional
     volumes:
-      - /config/calibre:/config
+      - /media/media-for-home/books:/config
       - /media/media-for-home/books:/books
     ports:
       - 8083:8083
