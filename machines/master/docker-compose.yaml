@@ -1,0 +1,226 @@
+version: "3.8"
+services:
+  homarr:
+    container_name: homarr-lab
+    image: ghcr.io/ajnart/homarr:latest
+    restart: unless-stopped
+    volumes:
+      - ./homarr/configs:/app/data/configs
+      - ./homarr/icons:/app/public/icons
+    ports:
+      - '7575:7575'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homarr.rule=Host(`home.lab`)"
+      - "traefik.http.routers.homarr.entrypoints=web"
+
+  calibre:
+    image: lscr.io/linuxserver/calibre:latest
+    container_name: calibre-lab
+    security_opt:
+      - seccomp=unconfined #corrected syntax
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - PASSWORD= #optional
+      - CLI_ARGS= #optional
+    volumes:
+      - /media/media-for-home/books:/config
+    ports:
+      - 8086:8080
+      - 8185:8181
+      - 8087:8081
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.calibre.rule=Host(`calibre.lab`)"
+      - "traefik.http.routers.calibre.entrypoints=web"
+
+  tautulli:
+    image: lscr.io/linuxserver/tautulli:latest
+    container_name: tautulli-lab
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+    volumes:
+      - /appdata/tautulli:/config
+    ports:
+      - 8181:8181
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tautulli.rule=Host(`tautulli.lab`)"
+      - "traefik.http.routers.tautulli.entrypoints=web"
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent-lab
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=America/Toronto
+      - WEBUI_PORT=8080
+    volumes:
+      - /appdata/qbit/config:/config
+      - /media/media-for-home:/downloads
+    ports:
+      - 8080:8080
+      - 6881:6881
+      - 6881:6881/udp
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.qbittorrent.rule=Host(`qbit.lab`)"
+      - "traefik.http.routers.qbittorrent.entrypoints=web"
+
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /root/.docker/config.json:/config.json
+    command: --interval 30
+
+
+  calibre-web:
+    image: lscr.io/linuxserver/calibre-web:latest
+    container_name: calibre-web-lab
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+      - DOCKER_MODS=linuxserver/mods:universal-calibre #optional
+      - OAUTHLIB_RELAX_TOKEN_SCOPE=1 #optional
+    volumes:
+      - /media/media-for-home/books:/config
+      - /media/media-for-home/books:/books
+    ports:
+      - 8083:8083
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.calibre-web.rule=Host(`calibre.lab`)"
+      - "traefik.http.routers.calibre-web.entrypoints=web"
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr-lab
+    restart: unless-stopped
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=America/Toronto
+    volumes:
+      - /appdata/prowlarr:/config
+    ports:
+      - 9696:9696
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.lab`)"
+      - "traefik.http.routers.prowlarr.entrypoints=web"
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr-lab
+    restart: unless-stopped
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=America/Toronto
+    volumes:
+      - /appdata/radarr:/config
+      - /media/media-for-home:/movies #optional
+      - /media/media-for-home:/downloads #optional
+    ports:
+      - 7878:7878
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.radarr.rule=Host(`radarr.lab`)"
+      - "traefik.http.routers.radarr.entrypoints=web"
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr-lab
+    restart: unless-stopped
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=America/Toronto
+    volumes:
+      - /appdata/sonarr:/config
+      - /media/media-for-home:/tv #optional
+      - /media/media-for-home:/downloads #optional
+    ports:
+      - 8989:8989
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.lab`)"
+      - "traefik.http.routers.sonarr.entrypoints=web"
+
+  overseerr:
+    image: lscr.io/linuxserver/overseerr:latest
+    container_name: overseerr-lab
+    restart: unless-stopped
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=America/Toronto
+    ports:
+      - 5055:5055
+    volumes:
+      - /appdata/overseerr:/config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.overseerr.rule=Host(`overseerr.lab`)"
+      - "traefik.http.routers.overseerr.entrypoints=web"
+
+
+  pyload-ng:
+    image: lscr.io/linuxserver/pyload-ng:latest
+    container_name: pyload-ng-lab
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+    ports:
+      - 8001:8000
+    volumes:
+      - /appdata/pyload/config:/config
+      - /media/media-for-home/downloads:/downloads
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pyload.rule=Host(`pyload.lab`)"
+      - "traefik.http.routers.pyload.entrypoints=web"
+
+  filebrowser:
+    image: hurlenko/filebrowser
+    user: "${UID}:${GID}"
+    ports:
+      - 443:8080
+    volumes:
+      - /media:/data
+      - /appdata/filebrowser:/config
+    environment:
+      - FB_BASEURL=/filebrowser
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.filebrowser.rule=Host(`filebrowser.lab`)"
+      - "traefik.http.routers.filebrowser.entrypoints=web"
+
+  reverse-proxy:
+    image: traefik:v2.5
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker"
+      - "--entrypoints.web.address=:80"
+      - "--providers.docker.exposedbydefault=false"
+      - "--log.level=DEBUG"
+    ports:
+      - "80:80"
+      - "8081:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /root/traefik.toml:/config/traefik.toml
