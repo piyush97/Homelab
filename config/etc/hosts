@@ -12,11 +12,10 @@ ff02::3 ip6-allhosts
 
 # Homelab config
 
-10.0.0.3  home.lab
-10.0.0.3  tautulli.lab
-10.0.0.3  nextcloud.lab
-10.0.0.3  qbit.lab
-10.0.0.6  photos.lab
+192.168.0.4  home.lab
+192.168.0.4  tautulli.lab
+192.168.0.4  nextcloud.lab
+192.168.0.4 qbit.lab
 192.168.0.7  prowlarr.lab
 192.168.0.7  radarr.lab
 192.168.0.7  sonarr.lab
