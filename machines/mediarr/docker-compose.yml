@@ -162,7 +162,7 @@ services:
     command: --api.insecure=true --providers.docker  --entrypoints.web.address=:80 --providers.docker.exposedbydefault=false --log.level=DEBUG
     ports:
       - "80:80"
-      - "8081:8080"
+      - "8082:8080"
 
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
