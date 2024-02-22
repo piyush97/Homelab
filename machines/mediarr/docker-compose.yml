@@ -16,8 +16,6 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.lab`)"
       - "traefik.http.routers.prowlarr.entrypoints=web"
-    depends_on:
-      - reverse-proxy
       
   radarr:
     image: lscr.io/linuxserver/radarr:latest
@@ -37,8 +35,6 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.radarr.rule=Host(`radarr.lab`)"
       - "traefik.http.routers.radarr.entrypoints=web"
-    depends_on:
-      - reverse-proxy
       
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
@@ -58,8 +54,6 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.sonarr.rule=Host(`sonarr.lab`)"
       - "traefik.http.routers.sonarr.entrypoints=web"
-    depends_on:
-      - reverse-proxy
       
   overseerr:
     image: lscr.io/linuxserver/overseerr:latest
@@ -75,8 +69,6 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.overseerr.rule=Host(`overseerr.lab`)"
       - "traefik.http.routers.overseerr.entrypoints=web"
-    depends_on:
-      - reverse-proxy
       
   autobrr:
     container_name: autobrr
@@ -91,8 +83,6 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.autobrr.rule=Host(`autobrr.lab`)"
       - "traefik.http.routers.autobrr.entrypoints=web"
-    depends_on:
-      - reverse-proxy
       
   sabnzbd:
     image: lscr.io/linuxserver/sabnzbd:latest
@@ -110,8 +100,6 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.sabnzbd.rule=Host(`sabnzbd.lab`)"
       - "traefik.http.routers.sabnzbd.entrypoints=web"
-    depends_on:
-      - reverse-proxy
       
   pyload-ng:
     image: lscr.io/linuxserver/pyload-ng:latest
@@ -128,8 +116,6 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.pyload.rule=Host(`pyload.lab`)"
       - "traefik.http.routers.pyload.entrypoints=web"
-    depends_on:
-      - reverse-proxy
       
   filebrowser:
     image: hurlenko/filebrowser
@@ -146,8 +132,6 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.filebrowser.rule=Host(`filebrowser.lab`)"
       - "traefik.http.routers.filebrowser.entrypoints=web"
-    depends_on:
-      - reverse-proxy
   watchtower:
     image: containrrr/watchtower
     volumes:
@@ -155,15 +139,15 @@ services:
       - /root/.docker/config.json:/config.json
     command: --interval 30
 
-  reverse-proxy:
-    image: traefik:latest
-    restart: unless-stopped
+  # reverse-proxy:
+  #   image: traefik:latest
+  #   restart: unless-stopped
 
-    command: --api.insecure=true --providers.docker  --entrypoints.web.address=:80 --providers.docker.exposedbydefault=false --log.level=DEBUG
-    ports:
-      - "80:80"
-      - "8082:8080"
+  #   command: --api.insecure=true --providers.docker  --entrypoints.web.address=:80 --providers.docker.exposedbydefault=false --log.level=DEBUG
+  #   ports:
+  #     - "80:80"
+  #     - "8082:8080"
 
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /root/traefik.toml:/config/traefik.toml
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - /root/traefik.toml:/config/traefik.toml
