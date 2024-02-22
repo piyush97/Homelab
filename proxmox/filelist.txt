@@ -1,0 +1,19 @@
+# container configs
+/etc/pve/lxc/*.conf
+
+# storage config
+/etc/pve/storage.cfg
+
+# user config
+/etc/pve/user.cfg
+
+# special files
+/etc/pve/.vmlist
+/etc/pve/.version
+/etc/pve/.members
+
+# docker mod
+/etc/modules-load.d/modules.conf
+
+# apt sources
+/etc/apt/sources.list.d/pve-enterprise.list
