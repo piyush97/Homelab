@@ -75,13 +75,6 @@ services:
       - "traefik.http.routers.qbittorrent.rule=Host(`qbit.lab`)"
       - "traefik.http.routers.qbittorrent.entrypoints=web"
 
-  watchtower:
-    image: containrrr/watchtower
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /root/.docker/config.json:/config.json
-    command: --interval 30
-
 
   calibre-web:
     image: lscr.io/linuxserver/calibre-web:latest
@@ -211,7 +204,7 @@ services:
       - "traefik.http.routers.filebrowser.entrypoints=web"
 
   reverse-proxy:
-    image: traefik:v2.5
+    image: traefik:latest
     command:
       - "--api.insecure=true"
       - "--providers.docker"
@@ -224,13 +217,3 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /root/traefik.toml:/config/traefik.toml
-
-  dockerproxy:
-    image: ghcr.io/tecnativa/docker-socket-proxy:latest
-    container_name: dockerproxy
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    restart: unless-stopped
-    environment:
-      - CONTAINERS=1
-      - POST=0
