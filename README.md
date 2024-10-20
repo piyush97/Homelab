@@ -86,7 +86,7 @@ Feel free to explore the repository and contribute if you have any suggestions, 
 
 [Link to GitHub Repository](https://github.com/piyush97/homelab)
 
-- Huge thanks to (TTECK/Proxmox helperscripts)[https://github.com/tteck/Proxmox] for the inspiration and some of the scripts used in this project.
+- Huge thanks to [TTECK/Proxmox](https://github.com/tteck/Proxmox) for the inspiration and some of the scripts used in this project.
 
 ## Conclusion
 
