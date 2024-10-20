@@ -80,7 +80,7 @@ The following guides and documentations are available for the Homelab server:
 - **[Storage Configuration](guides/storage.md):** Instructions on configuring the RAID 1 setup with ZFS, along with any additional storage-related details.
 - **Services and Applications:** A list of the services and applications deployed on the Homelab server, along with their configurations.
 - **[Troubleshooting](guides/storage.md):** Solutions to common issues and troubleshooting tips for the Homelab setup.
-- **Contributing:** Guidelines for contributing to the repository or suggesting improvements.
+- **[Contributing](CONTRIBUTING.md):** Guidelines for contributing to the repository or suggesting improvements.
 
 Feel free to explore the repository and contribute if you have any suggestions, ideas, or improvements!
 
