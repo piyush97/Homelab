@@ -1,71 +1,44 @@
-# Machines
+# Machines Directory
 
-This repository contains two folders, `mediarr` and `misc`, each with their respective `docker-compose.yml` files and a `readme` file.
+This directory contains Docker Compose configurations and related files for different services deployed on the Homelab server. Below is an overview of the directory structure and the purpose of each subdirectory.
 
-## mediarr
+## Directory Structure
 
-The `mediarr` folder contains a `docker-compose.yml` file with a setup for a media server environment. It includes services for media management, torrenting, and more. Below are the details of the services:
+### `v1/`
 
-### homarr
+Contains the first version of service configurations.
 
-A service running a container with the latest version of Homarr, a media management tool. It is accessible at `http://home.lab`.
+- **adguard home/**: Configuration for AdGuard Home.
+  - [AdGuardHome.yaml](v1/adguard%20home/AdGuardHome.yaml)
+- **master/**: Configuration for master services.
+  - [docker-compose.yaml](v1/master/docker-compose.yaml)
+- **mediarr/**: Configuration for media-related services.
+  - [docker-compose.yml](v1/mediarr/docker-compose.yml)
+  - [README.md](v1/mediarr/README.md)
+- **misc/**: Miscellaneous service configurations.
+  - [docker-compose.yml](v1/misc/docker-compose.yml)
+  - [README.md](v1/misc/README.md)
 
-### pihole
+### `v2/`
 
-A service running a container with Pi-hole, a network-wide ad blocker and DNS sinkhole. It is accessible at `http://pihole.lab`.
+Contains the second version of service configurations.
 
-### tautulli
+- **nextcloud/**: Configuration for Nextcloud.
+  - [docker-compose.yaml](v2/nextcloud/docker-compose.yaml)
+- **reverse-proxy/**: Configuration for reverse proxy services.
+  - [docker-compose.yaml](v2/reverse-proxy/docker-compose.yaml)
+- **servarr/**: Configuration for \*arr stack services.
+  - [docker-compose.yaml](v2/servarr/docker-compose.yaml)
 
-A service running a container with Tautulli, a monitoring and tracking tool for Plex media server. It is accessible at `http://tautulli.lab`.
+## Purpose
 
-### qbit-autobrr
+The configurations in this directory are used to deploy and manage various services on the Homelab server. Each subdirectory contains specific configurations for different services, allowing for easy management and deployment using Docker Compose.
 
-A service running a container with qBittorrent, a BitTorrent client, with AutoBRR for ratio automation and seeding. It is accessible at `http://qbit-autobrr.lab`.
+## How to Use
 
-### qbittorrent
-
-A service running a container with qBittorrent. It is accessible at `http://qbit.lab`.
-
-### watchtower
-
-A container running Watchtower, which automatically updates other containers to their latest available image versions.
-
-### reverse-proxy
-
-A container running Traefik as a reverse proxy. It enables access to the services using the specified hostnames in each service's configuration. It listens on ports 80 (HTTP) and 8081 (Traefik API).
-
-## misc
-
-The `misc` folder contains another `docker-compose.yml` file with a different set of services. Below are the details of the services:
-
-### homarr
-
-A service running a container with the latest version of Homarr, a media management tool. It is accessible at `http://home.lab`.
-
-### pihole
-
-A service running a container with Pi-hole, a network-wide ad blocker and DNS sinkhole. It is accessible at `http://pihole.lab`.
-
-### tautulli
-
-A service running a container with Tautulli, a monitoring and tracking tool for Plex media server. It is accessible at `http://tautulli.lab`.
-
-### qbit-autobrr
-
-A service running a container with qBittorrent, a BitTorrent client, with AutoBRR for ratio automation and seeding. It is accessible at `http://qbit-autobrr.lab`.
-
-### qbittorrent
-
-A service running a container with qBittorrent. It is accessible at `http://qbit.lab`.
-
-### watchtower
-
-A container running Watchtower, which automatically updates other containers to their latest available image versions.
-
-### reverse-proxy
-
-A container running Traefik as a reverse proxy. It enables access to the services using the specified hostnames in each service's configuration. It listens on ports 80 (HTTP) and 8081 (Traefik API).
-
-Please refer to the respective `docker-compose.yml` files and readmes in each folder for more specific information about each setup.
-
-Feel free to explore, customize, and utilize the services based on your needs and preferences. Happy home server setup! 🚀
+1. Navigate to the desired service directory.
+2. Review the `docker-compose.yaml` file and make any necessary adjustments.
+3. Deploy the service using Docker Compose:
+   ```sh
+   docker-compose up -d
+   ```
