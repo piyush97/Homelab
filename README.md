@@ -75,7 +75,7 @@ Contains configuration files for Proxmox.
 
 The following guides and documentations are available for the Homelab server:
 
-- **I[nstallation Guide](guides/installation.md):** A detailed guide on setting up Proxmox and configuring the Intel NUC i7-1360P for optimal performance.
+- **[Installation Guide](guides/installation.md):** A detailed guide on setting up Proxmox and configuring the Intel NUC i7-1360P for optimal performance.
 - *[*Network Configuration](guides/network.md):\*\* Documentation on the network setup, including any VLANs, subnets, or firewall rules implemented.
 - **[Storage Configuration](guides/storage.md):** Instructions on configuring the RAID 1 setup with ZFS, along with any additional storage-related details.
 - **Services and Applications:** A list of the services and applications deployed on the Homelab server, along with their configurations.
