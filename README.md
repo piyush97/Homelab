@@ -71,20 +71,22 @@ Contains configuration files for Proxmox.
     - [storage.cfg](proxmox/etc/pve/storage.cfg)
   - [filelist.txt](proxmox/filelist.txt)
 
-## GitHub Repository (TO DO)
+## Guides and Documentations
 
-To explore more about my Homelab server configuration and stay up to date with any changes or improvements, you can check out the corresponding GitHub repository. The repository contains the following sections:
+The following guides and documentations are available for the Homelab server:
 
-- **Installation Guide:** A detailed guide on setting up Proxmox and configuring the Intel NUC i7-1360P for optimal performance.
-- **Network Configuration:** Documentation on the network setup, including any VLANs, subnets, or firewall rules implemented.
-- **Storage Configuration:** Instructions on configuring the RAID 1 setup with ZFS, along with any additional storage-related details.
+- **I[nstallation Guide](guides/installation.md):** A detailed guide on setting up Proxmox and configuring the Intel NUC i7-1360P for optimal performance.
+- *[*Network Configuration](guides/network.md):\*\* Documentation on the network setup, including any VLANs, subnets, or firewall rules implemented.
+- **[Storage Configuration](guides/storage.md):** Instructions on configuring the RAID 1 setup with ZFS, along with any additional storage-related details.
 - **Services and Applications:** A list of the services and applications deployed on the Homelab server, along with their configurations.
-- **Troubleshooting:** Solutions to common issues and troubleshooting tips for the Homelab setup.
+- **[Troubleshooting](guides/storage.md):** Solutions to common issues and troubleshooting tips for the Homelab setup.
 - **Contributing:** Guidelines for contributing to the repository or suggesting improvements.
 
 Feel free to explore the repository and contribute if you have any suggestions, ideas, or improvements!
 
 [Link to GitHub Repository](https://github.com/piyush97/homelab)
+
+### Huge thanks to (TTECK/Proxmox helperscripts)[https://github.com/tteck/Proxmox] for the inspiration and some of the scripts used in this project.
 
 ## Conclusion
 
