@@ -1,0 +1,209 @@
+# Docker Compose file for the *arr stack. Configuration files are stored
+# in a docker folder mounted in root. Change to bind mounts if needed.
+# All containers are run with user and group IDs of the main user to
+# avoid permissions issues of downloaded files. Please refer to the readme file for more information.
+
+version: "3.9"
+
+services:
+  # VPN service using gluetun
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - 8080:8080 # qBittorrent web interface
+      - 6881:6881 # qBittorrent torrent port
+      - 6789:6789 # NZBGet
+      - 9696:9696 # Prowlarr
+    volumes:
+      - /docker/gluetun:/gluetun
+    environment:
+      - VPN_SERVICE_PROVIDER=mullvad
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY} # Replace with your WireGuard private key
+      - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES} # Replace with your WireGuard addresses
+      - SERVER_CITIES=Toronto
+      - HEALTH_VPN_DURATION_INITIAL=120s
+    healthcheck:
+      test: ping -c 1 www.google.com || exit 1
+      interval: 60s
+      timeout: 20s
+      retries: 5
+    restart: unless-stopped
+
+  # Deunhealth service to monitor and restart unhealthy containers
+  deunhealth:
+    image: qmcgaw/deunhealth
+    container_name: deunhealth
+    network_mode: "none"
+    environment:
+      - LOG_LEVEL=info
+      - HEALTH_SERVER_ADDRESS=127.0.0.1:9999
+      - TZ=America/Toronto
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  # qBittorrent client
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    restart: unless-stopped
+    labels:
+      deunhealth.restart.on.unhealthy: true
+    environment:
+      - PUID=1000 # Replace with your user ID
+      - PGID=1003 # Replace with your group ID
+      - TZ=America/Toronto
+      - WEBUI_PORT=8080
+      - TORRENTING_PORT=6881
+    volumes:
+      - /docker/qbittorrent:/config
+      - /data:/data
+    network_mode: service:gluetun
+    healthcheck:
+      test: ping -c 1 www.google.com || exit 1
+      interval: 60s
+      retries: 3
+      start_period: 20s
+      timeout: 10s
+
+  # NZBGet client
+  nzbget:
+    image: lscr.io/linuxserver/nzbget:latest
+    container_name: nzbget
+    environment:
+      - PUID=1000 # Replace with your user ID
+      - PGID=1003 # Replace with your group ID
+      - TZ=America/Toronto
+      - NZBGET_USER=user # Replace with your NZBGet username
+      - NZBGET_PASS=password # Replace with your NZBGet password
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /docker/nzbget:/config
+      - /data:/data
+    restart: unless-stopped
+    network_mode: service:gluetun
+
+  # Prowlarr indexer
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=1000 # Replace with your user ID
+      - PGID=1003 # Replace with your group ID
+      - TZ=America/Toronto
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /docker/prowlarr:/config
+    restart: unless-stopped
+    network_mode: service:gluetun
+
+  # Sonarr for TV shows
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    restart: unless-stopped
+    environment:
+      - PUID=1000 # Replace with your user ID
+      - PGID=1003 # Replace with your group ID
+      - TZ=America/Toronto
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /docker/sonarr:/config
+      - /data:/data
+    ports:
+      - 8989:8989
+
+  # Radarr for movies
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    restart: unless-stopped
+    environment:
+      - PUID=1000 # Replace with your user ID
+      - PGID=1003 # Replace with your group ID
+      - TZ=America/Toronto
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /docker/radarr:/config
+      - /data:/data
+    ports:
+      - 7878:7878
+
+  # Lidarr for music
+  lidarr:
+    container_name: lidarr
+    image: lscr.io/linuxserver/lidarr:latest
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /docker/lidarr:/config
+      - /data:/data
+    environment:
+      - PUID=1000 # Replace with your user ID
+      - PGID=1003 # Replace with your group ID
+      - TZ=America/Toronto
+    ports:
+      - 8686:8686
+
+  # Bazarr for subtitles
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    restart: unless-stopped
+    environment:
+      - PUID=1000 # Replace with your user ID
+      - PGID=1003 # Replace with your group ID
+      - TZ=America/Toronto
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /docker/bazarr:/config
+      - /data:/data
+    ports:
+      - 6767:6767
+
+  # Readarr for ebooks
+  readarr:
+    image: lscr.io/linuxserver/readarr:develop
+    container_name: readarr
+    environment:
+      - PUID=1000 # Replace with your user ID
+      - PGID=1003 # Replace with your group ID
+      - TZ=America/Toronto
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /docker/readarr:/config
+      - /data:/data
+    ports:
+      - 8787:8787
+    restart: unless-stopped
+
+  # FlareSolverr for bypassing Cloudflare
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    ports:
+      - "8191:8191"
+    environment:
+      - LOG_LEVEL=info
+    restart: unless-stopped
+
+  # Overseerr for media requests
+  overseerr:
+    image: lscr.io/linuxserver/overseerr:latest
+    container_name: overseerr
+    environment:
+      - PUID=1000 # Replace with your user ID
+      - PGID=1003 # Replace with your group ID
+      - TZ=America/Toronto
+    volumes:
+      - /docker/overseer/config:/config
+      - /data:/data
+    ports:
+      - 5055:5055
+    restart: unless-stopped
