@@ -25,6 +25,10 @@ Welcome to my Homelab server! This document provides an overview of the configur
 - **Network Configuration:** 2.5GBe LAN connection with [GL.Inet Flint2](https://www.gl-inet.com/products/gl-mt6000/) and Caldigit TS4 Elements Hub using 1 Thunderbolt 4 port
 - **Services and Applications:** [Services](machines)
 
+# Homelab Architecture
+![Homelab Architecture](Homelab-architecture.png)
+
+
 ## Directory Structure
 
 ### `config/`
