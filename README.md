@@ -19,30 +19,14 @@ Welcome to my Homelab server! This document provides an overview of the configur
 - **Container Technology:** LXC (Linux Containers)
 - **Virtual Machine Technology:** QEMU/KVM
 
-## Reverse Proxy Solutions
+## Reverse Proxy Solution
 
-This homelab supports multiple reverse proxy solutions for maximum flexibility:
-
-### 🔄 NPMplus (Current)
-
-- **Location:** `compose.yml`
-- **Status:** Currently deployed
-- **Features:** Web UI, Let's Encrypt automation, CrowdSec integration
-- **Services:** 37+ configured proxy hosts
-
-### 🚀 SWAG (LinuxServer.io)
+### SWAG (LinuxServer.io)
 
 - **Location:** `SWAG-reverse-proxy/`
-- **Status:** Ready for deployment
+- **Status:** Currently deployed
 - **Features:** nginx-based, automatic SSL, fail2ban
 - **Configurations:** Auto-generated subdomain configs for all services
-
-### ⚡ Caddy with xCaddy
-
-- **Location:** `caddy/`
-- **Status:** Ready for deployment
-- **Features:** Automatic HTTPS, HTTP/3, modern security
-- **Plugins:** Security, monitoring, and CrowdSec integration
 
 ## Service Architecture
 
@@ -61,25 +45,14 @@ This homelab supports multiple reverse proxy solutions for maximum flexibility:
 - **Services and Applications:** [Services](machines)
 
 # Homelab Architecture
-![Homelab Architecture](Homelab-architecture.png)
 
+![Homelab Architecture](Homelab-architecture.png)
 
 ## Directory Structure
 
 ### `config/`
 
 Contains configuration files for various services and applications.
-
-### `caddy/`
-
-**Caddy reverse proxy configuration with xCaddy plugins:**
-
-- **[Caddyfile](caddy/Caddyfile):** Main Caddy configuration with all 37 services
-- **[build-xcaddy.sh](caddy/build-xcaddy.sh):** Script to build Caddy with security plugins
-- **[docker-compose.yml](caddy/docker-compose.yml):** Docker deployment with monitoring
-- **[Dockerfile.caddy](caddy/Dockerfile.caddy):** Custom Caddy image with plugins
-- **[migrate-from-npmplus.sh](caddy/migrate-from-npmplus.sh):** Migration script from NPMplus
-- **[README.md](caddy/README.md):** Comprehensive migration guide
 
 ### `SWAG-reverse-proxy/`
 
@@ -142,11 +115,10 @@ The following guides and documentations are available for the Homelab server:
 - **[Storage Configuration](guides/storage.md):** Instructions on configuring the RAID 1 setup with ZFS, along with any additional storage-related details.
 - **[Troubleshooting](guides/troubleshooting.md):** Solutions to common issues and troubleshooting tips for the Homelab setup.
 
-### Reverse Proxy Migration Guides
+### Reverse Proxy Configuration
 
-- **[Caddy Migration Guide](caddy/README.md):** Complete guide for migrating from NPMplus to Caddy with xCaddy plugins
 - **[SWAG Configuration Guide](SWAG-reverse-proxy/README.md):** Step-by-step SWAG deployment and configuration
-- **[Security Setup](SECURITY_SETUP.md):** Enhanced security configurations for all proxy solutions
+- **[Security Setup](SECURITY_SETUP.md):** Enhanced security configurations for SWAG
 
 ### Service Documentation
 
@@ -156,14 +128,7 @@ The following guides and documentations are available for the Homelab server:
 
 ## Quick Start
 
-### 1. Current NPMplus Setup
-
-```bash
-# Deploy current NPMplus configuration
-docker-compose up -d
-```
-
-### 2. Migrate to SWAG
+### SWAG Setup
 
 ```bash
 # Navigate to SWAG directory
@@ -178,20 +143,6 @@ cp cloudflare.ini.template cloudflare.ini
 
 # Deploy SWAG with all configurations
 docker-compose up -d
-```
-
-### 3. Migrate to Caddy
-
-```bash
-# Build custom Caddy with plugins
-cd caddy
-./build-xcaddy.sh
-
-# Or use Docker
-docker-compose up -d
-
-# Migrate from NPMplus
-./migrate-from-npmplus.sh --backup --validate
 ```
 
 ## Service Overview
@@ -245,7 +196,7 @@ docker-compose up -d
 - **Automatic HTTPS:** Let's Encrypt certificates for all services
 - **Security Headers:** HSTS, CSP, and other security headers
 - **Access Control:** IP-based restrictions and authentication
-- **Intrusion Detection:** CrowdSec integration across all solutions
+- **Intrusion Detection:** fail2ban integration with SWAG
 - **DDoS Protection:** Rate limiting and connection throttling
 - **Vulnerability Scanning:** Regular security assessments
 
@@ -293,6 +244,6 @@ If you find this project helpful, please consider:
 
 ## Conclusion
 
-Thank you for exploring my Homelab server configuration. This setup provides multiple reverse proxy solutions to fit different needs and preferences, from the user-friendly NPMplus to the powerful and modern Caddy solution.
+Thank you for exploring my Homelab server configuration. This setup uses SWAG as the reverse proxy solution, providing nginx-based automatic SSL certificates and fail2ban security integration for all services.
 
 If you have any questions, need further assistance, or want to contribute, feel free to reach out through the repository issues or discussions!
