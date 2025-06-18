@@ -46,7 +46,161 @@ Welcome to my Homelab server! This document provides an overview of the configur
 
 # Homelab Architecture
 
-![Homelab Architecture](Homelab-architecture.png)
+## System Architecture Diagram
+
+```mermaid
+graph TB
+    subgraph "Proxmox Host"
+        PVE["Proxmox VE<br/>Hypervisor"]
+        LXC["LXC Containers"]
+        VM["QEMU/KVM VMs"]
+    end
+
+    subgraph "Reverse Proxy Layer"
+        SWAG["SWAG nginx<br/>LinuxServer.io<br/>Auto SSL<br/>fail2ban"]
+        CF["Cloudflare DNS<br/>Domain Management"]
+    end
+
+    subgraph "Media Services"
+        Plex["Plex Media Server<br/>plex.piyushmehta.com"]
+        Jellyfin["Jellyfin<br/>jellyfin.piyushmehta.com"]
+        Immich["Immich Photos<br/>photos.piyushmehta.com"]
+        Navidrome["Navidrome Music<br/>music.piyushmehta.com"]
+    end
+
+    subgraph "Automation Stack"
+        Overseerr["Overseerr<br/>request.piyushmehta.com"]
+        Radarr["Radarr Movies<br/>radar.piyushmehta.com"]
+        Sonarr["Sonarr TV<br/>sonarr.piyushmehta.com"]
+        Prowlarr["Prowlarr Indexers<br/>prowlarr.piyushmehta.com"]
+        Transmission["Transmission<br/>transmission.piyushmehta.com"]
+    end
+
+    subgraph "Development Tools"
+        A1111["Stable Diffusion<br/>a1111.piyushmehta.com"]
+        Jupyter["JupyterLab<br/>jupyter.piyushmehta.com"]
+        VSCode["VS Code Server<br/>code.piyushmehta.com"]
+        Portainer["Portainer<br/>portainer.piyushmehta.com"]
+    end
+
+    subgraph "Productivity Suite"
+        Vaultwarden["Vaultwarden<br/>vault.piyushmehta.com"]
+        Nextcloud["Nextcloud<br/>nextcloud.piyushmehta.com"]
+        Syncthing["Syncthing<br/>sync.piyushmehta.com"]
+        FileBrowser["File Browser<br/>files.piyushmehta.com"]
+    end
+
+    subgraph "Monitoring Stack"
+        Grafana["Grafana Dashboard<br/>monitor.piyushmehta.com"]
+        Prometheus["Prometheus Metrics"]
+        UptimeKuma["Uptime Kuma<br/>uptime.piyushmehta.com"]
+        LogManagement["Log Management<br/>logs.piyushmehta.com"]
+    end
+
+    subgraph "Home Automation"
+        HomeAssistant["Home Assistant<br/>home.piyushmehta.com"]
+        Zigbee2MQTT["Zigbee2MQTT<br/>zigbee.piyushmehta.com"]
+        MQTTBroker["MQTT Broker<br/>mqtt.piyushmehta.com"]
+    end
+
+    subgraph "Security Layer"
+        WireGuard["WireGuard VPN<br/>wg.piyushmehta.com"]
+        fail2ban["fail2ban<br/>Intrusion Detection"]
+        LetsEncrypt["Let's Encrypt<br/>SSL Certificates"]
+    end
+
+    %% Proxmox layer
+    PVE --> LXC
+    PVE --> VM
+
+    %% Services deployment
+    LXC --> SWAG
+    LXC --> Plex
+    LXC --> Jellyfin
+    LXC --> Overseerr
+    LXC --> A1111
+    LXC --> Vaultwarden
+    LXC --> Grafana
+    LXC --> HomeAssistant
+
+    %% Network flow
+    CF --> SWAG
+    SWAG --> Plex
+    SWAG --> Jellyfin
+    SWAG --> Immich
+    SWAG --> Navidrome
+    SWAG --> Overseerr
+    SWAG --> Radarr
+    SWAG --> Sonarr
+    SWAG --> Prowlarr
+    SWAG --> Transmission
+    SWAG --> A1111
+    SWAG --> Jupyter
+    SWAG --> VSCode
+    SWAG --> Portainer
+    SWAG --> Vaultwarden
+    SWAG --> Nextcloud
+    SWAG --> Syncthing
+    SWAG --> FileBrowser
+    SWAG --> Grafana
+    SWAG --> UptimeKuma
+    SWAG --> LogManagement
+    SWAG --> HomeAssistant
+    SWAG --> Zigbee2MQTT
+    SWAG --> MQTTBroker
+    SWAG --> WireGuard
+
+    %% Security integration
+    fail2ban --> SWAG
+    LetsEncrypt --> SWAG
+
+    %% Service interconnections
+    Overseerr --> Radarr
+    Overseerr --> Sonarr
+    Radarr --> Transmission
+    Sonarr --> Transmission
+    Prowlarr --> Radarr
+    Prowlarr --> Sonarr
+
+    %% Monitoring connections
+    Prometheus --> Grafana
+    UptimeKuma --> Grafana
+    LogManagement --> Grafana
+
+    %% Home automation flow
+    HomeAssistant --> Zigbee2MQTT
+    HomeAssistant --> MQTTBroker
+    Zigbee2MQTT --> MQTTBroker
+
+    %% Storage connections
+    PVE --> Plex
+    PVE --> Jellyfin
+    PVE --> Immich
+    PVE --> Nextcloud
+    PVE --> FileBrowser
+    PVE --> A1111
+    PVE --> Jupyter
+
+    %% Styling
+    classDef proxy fill:#f3e5f5
+    classDef media fill:#e8f5e8
+    classDef automation fill:#fff3e0
+    classDef development fill:#fce4ec
+    classDef productivity fill:#e0f2f1
+    classDef monitoring fill:#fff8e1
+    classDef homeauto fill:#f1f8e9
+    classDef security fill:#ffebee
+
+    class PVE,LXC,VM proxy
+    class SWAG,CF proxy
+    class Plex,Jellyfin,Immich,Navidrome media
+    class Overseerr,Radarr,Sonarr,Prowlarr,Transmission automation
+    class A1111,Jupyter,VSCode,Portainer development
+    class Vaultwarden,Nextcloud,Syncthing,FileBrowser productivity
+    class Grafana,Prometheus,UptimeKuma,LogManagement monitoring
+    class HomeAssistant,Zigbee2MQTT,MQTTBroker homeauto
+    class WireGuard,fail2ban,LetsEncrypt security
+```
 
 ## Directory Structure
 
