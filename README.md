@@ -60,6 +60,10 @@ This homelab supports multiple reverse proxy solutions for maximum flexibility:
 - **Network Configuration:** 2.5GBe LAN connection with [GL.Inet Flint2](https://www.gl-inet.com/products/gl-mt6000/) and Caldigit TS4 Elements Hub using 1 Thunderbolt 4 port
 - **Services and Applications:** [Services](machines)
 
+# Homelab Architecture
+![Homelab Architecture](Homelab-architecture.png)
+
+
 ## Directory Structure
 
 ### `config/`
