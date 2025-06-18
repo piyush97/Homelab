@@ -28,8 +28,6 @@ Welcome to my Homelab server! This document provides an overview of the configur
 - **Features:** nginx-based, automatic SSL, fail2ban
 - **Configurations:** Auto-generated subdomain configs for all services
 
-## Service Architecture
-
 **Total Services:** 37 configured services including:
 
 - Media services (Plex, Jellyfin, Immich)
