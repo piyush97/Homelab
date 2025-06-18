@@ -1,0 +1,110 @@
+# ==============================================
+# SWAG Docker Compose Configuration
+# LinuxServer.io SWAG with auto-generated configs
+# ==============================================
+
+version: "3.8"
+
+services:
+  swag:
+    image: lscr.io/linuxserver/swag:latest
+    container_name: swag
+    restart: unless-stopped
+    
+    # Use host networking for direct access like NPMplus
+    network_mode: host
+    
+    # Capabilities for binding to privileged ports
+    cap_add:
+      - NET_ADMIN
+      - NET_BIND_SERVICE
+    
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+      - URL=piyushmehta.com
+      - SUBDOMAINS=wildcard
+      - VALIDATION=dns
+      - DNSPLUGIN=cloudflare
+      - EMAIL=me@piyushmehta.com
+      - ONLY_SUBDOMAINS=false
+      - STAGING=false  # Set to true for testing
+      
+    volumes:
+      # Main SWAG config directory
+      - /opt/swag:/config
+      
+      # Mount our generated subdomain configs
+      - ./swag-configs:/config/nginx/proxy-confs:ro
+      
+      # CloudFlare credentials
+      - ./cloudflare.ini:/config/dns-conf/cloudflare.ini:ro
+      
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1G
+        reservations:
+          memory: 256M
+    
+    # Logging configuration
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Optional: Fail2Ban for additional security
+  fail2ban:
+    image: lscr.io/linuxserver/fail2ban:latest
+    container_name: fail2ban
+    restart: unless-stopped
+    network_mode: host
+    
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+      - VERBOSITY=-vv
+    
+    volumes:
+      - /opt/fail2ban:/config
+      - /opt/swag/log:/var/log/swag:ro
+      - /var/log:/var/log:ro
+    
+    depends_on:
+      - swag
+
+# If you prefer bridge networking instead of host
+networks:
+  swag-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+
+# Volumes for persistent data
+volumes:
+  swag-config:
+    driver: local
+  fail2ban-config:
+    driver: local

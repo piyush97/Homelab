@@ -1,0 +1,26 @@
+---
+version: "2.1"
+services:
+  swag:
+    image: lscr.io/linuxserver/swag
+    container_name: swag
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+      - URL=piyushmehta.com
+      - SUBDOMAINS=wildcard
+      - VALIDATION=dns
+      - DNSPLUGIN=cloudflare
+      - CF_API_TOKEN=YOUR_CLOUDFLARE_API_TOKEN #replace with your Cloudflare API token
+      - EMAIL=me@piyushmehta.com #optional
+      - ONLY_SUBDOMAINS=true #optional
+      - STAGING=false #optional
+    volumes:
+      - /home/swag:/config
+    ports:
+      - 443:443
+      - 80:80 #optional
+    restart: unless-stopped

@@ -1,0 +1,13 @@
+# Cloudflare API credentials for SWAG
+# Copy this file to cloudflare.ini and fill in your credentials
+
+# Option 1: API Token (Recommended)
+# Create a token at https://dash.cloudflare.com/profile/api-tokens
+# Token permissions needed:
+# - Zone:Zone:Read
+# - Zone:DNS:Edit
+dns_cloudflare_api_token = YOUR_CLOUDFLARE_API_TOKEN_HERE
+
+# Option 2: Global API Key (Less secure, not recommended)
+# dns_cloudflare_email = your-email@example.com
+# dns_cloudflare_api_key = YOUR_GLOBAL_API_KEY_HERE
